@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: spark-api
+    
+  # Tell Spring to also load the 'secret' profile (application-secret.yaml)
+  profiles:
+    include: secret
+
+  # Database Connection Settings
+  datasource:
+    url: jdbc:postgresql://localhost:5432/spark_db
+    username: postgres
+    driver-class-name: org.postgresql.Driver
+
+  # JPA / Hibernate Settings
+  jpa:
+    hibernate:
+      ddl-auto: update 
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+server:
+  port: 8080
