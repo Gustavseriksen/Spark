@@ -14,16 +14,19 @@ Spark is a premium, full-stack platform designed to streamline and gamify the jo
 ##  Visual Preview
 
 *(Currently implementing the frontend based on these UI/UX wireframes)*
-![login](C:\Users\gusta\spark-project\docs\assets\login.png)
-![dashboard](C:\Users\gusta\spark-project\docs\assets\dashboard.png)
-![targeted](C:\Users\gusta\spark-project\docs\assets\targeted.png)
-![profile](C:\Users\gusta\spark-project\docs\assets\profile.png)
+
+### Authentication
+![Login Preview](./docs/assets/login.png)
 
 ### The Dashboard & Analytics
 ![Spark Dashboard Preview](./docs/assets/dashboard.png)
 
-### Targeted Applications (Rich Data View)
+### Targeted Applications
 ![Targeted Applications Preview](./docs/assets/targeted.png)
+
+### Profile & Preferences
+![Profile Preview](./docs/assets/profile.png)
+
 
 ##  Key Features
 
