@@ -1,0 +1,36 @@
+name: Backend CI (Spring Boot)
+
+# Only trigger this workflow when changes are pushed to the main branch
+# AND only if those changes are inside the backend folder.
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'spark-api/**'
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - 'spark-api/**'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    # This tells GitHub to run all commands inside the backend folder
+    defaults:
+      run:
+        working-directory: ./spark-api
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK
+      uses: actions/setup-java@v4
+      with:
+        java-version: '25'
+        distribution: 'temurin'
+        cache: 'maven'
+
+    - name: Run Spring Boot Tests
+      run: mvn clean test
