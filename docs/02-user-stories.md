@@ -3,7 +3,7 @@
 ## Epic 1: Infrastructure & Setup
 - [x] **Task 1.1:** Initialize Spring Boot backend (`spark-api`) with Java 25 and PostgreSQL.
 - [x] **Task 1.2:** Initialize Next.js frontend (`spark-web`) with Tailwind CSS.
-- [ ] **Task 1.3:** Setup CI/CD pipeline via GitHub Actions for backend tests.
+- [x] **Task 1.3:** Setup CI/CD pipeline via GitHub Actions for backend tests.
 - [ ] **Task 1.4:** Define and implement base database schema (JPA Entities).
 
 ## Epic 2: Core Job Tracking (The MVP)
