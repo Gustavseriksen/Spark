@@ -7,7 +7,7 @@
 - [x] **Task 1.4:** Define and implement base database schema (JPA Entities).
 
 ## Epic 2: Authentication & User Accounts
-- [ ] **Story 2.1:** As a user, I want to create an account with my first name, last name, email, and password so I can have a personalized space to track my applications.
+- [x] **Story 2.1:** As a user, I want to create an account with my first name, last name, email, and password so I can have a personalized space to track my applications.
 - [ ] **Task 2.2:** Implement Spring Security and JWT (JSON Web Tokens) in the backend to securely hash passwords and authenticate API requests.
 - [ ] **Task 2.3:** Update backend registration logic to automatically generate a default `UserPreference` row whenever a new user signs up.
 - [ ] **Story 2.4:** As a user, I want to log in and securely maintain my session across the Next.js app, and log out when I am done.

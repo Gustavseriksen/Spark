@@ -10,7 +10,7 @@ import java.util.UUID;
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID> {
     
-    // Spring Data JPA magically writes the SQL query for this method behind the scenes!
+    // Spring Data JPA magically writes the SQL query for this method behind the scenes
     Optional<User> findByEmail(String email);
     
     boolean existsByEmail(String email);
