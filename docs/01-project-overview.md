@@ -2,7 +2,7 @@
 
 ## 1. Project Overview
 
-Spark is a modern job application tracker designed to reduce the psychological stress of job hunting. It combines robust data organization with gamification, motivation, and a unique "Value Matching Algorithm" to help users not just track applications, but find the *right* jobs.
+Spark is a modern job application tracker designed to reduce the psychological stress of job hunting. It combines robust data organization with gamification motivation, and a unique "Value Matching Algorithm" to help users not just track applications, but find the *right* jobs.
 
 ## 2. Tech Stack & Architecture
 

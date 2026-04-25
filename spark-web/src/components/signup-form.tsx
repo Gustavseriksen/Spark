@@ -63,7 +63,7 @@ export function SignupForm({
         return;
       }
 
-      router.push("/");
+      router.push("/login");
     } catch {
       setError("Something went wrong. Please try again later.");
     } finally {

@@ -34,8 +34,7 @@
 ## Epic 6: Gamification & Analytics
 - [ ] **Story 6.1:** As a user, I want to set a weekly application goal (e.g., 10 apps) and see a visual progress bar.
 - [ ] **Story 6.2:** As a user, I want to see a "GitHub-style" contribution streak graph visually rewarding consistency.
-- [ ] **Story 6.3:** As a user, I want to see an interactive, motivational UI avatar that praises me when I log an application.
-- [ ] **Story 6.4:** As a user, I want an analytics dashboard showing: Sent this week/month/year, Total Interviews, Total Offers, and my "High Score" (Highest applications sent in a single day/week/month).
+- [ ] **Story 6.3:** As a user, I want an analytics dashboard showing: Sent this week/month/year, Total Interviews, Total Offers, and my "High Score" (Highest applications sent in a single day/week/month).
 
 ## Epic 7: Browser Extension (Stretch Goal)
 - [ ] **Story 7.1:** As a user, I want a Chrome Extension that scrapes Job Title, Company, and Link from LinkedIn/Indeed and pushes it directly to my Spark app.
