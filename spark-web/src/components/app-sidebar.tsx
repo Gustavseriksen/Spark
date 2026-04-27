@@ -2,6 +2,7 @@
 
 import * as React from "react"
 
+import { Logo } from "@/components/logo"
 import { NavDocuments } from "@/components/nav-documents"
 import { NavMain } from "@/components/nav-main"
 import { NavSecondary } from "@/components/nav-secondary"
@@ -11,11 +12,8 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { LayoutDashboardIcon, ListIcon, ChartBarIcon, FolderIcon, UsersIcon, CameraIcon, FileTextIcon, Settings2Icon, CircleHelpIcon, SearchIcon, DatabaseIcon, FileChartColumnIcon, FileIcon, CommandIcon } from "lucide-react"
+import { LayoutDashboardIcon, ListIcon, FolderIcon, CameraIcon, FileTextIcon, Settings2Icon, CircleHelpIcon, DatabaseIcon, FileChartColumnIcon, FileIcon } from "lucide-react"
 
 const data = {
   user: {
@@ -33,23 +31,7 @@ const data = {
       ),
     },
     {
-      title: "Lifecycle",
-      url: "#",
-      icon: (
-        <ListIcon
-        />
-      ),
-    },
-    {
-      title: "Analytics",
-      url: "#",
-      icon: (
-        <ChartBarIcon
-        />
-      ),
-    },
-    {
-      title: "Projects",
+      title: "Targeted Applications",
       url: "#",
       icon: (
         <FolderIcon
@@ -57,10 +39,10 @@ const data = {
       ),
     },
     {
-      title: "Team",
+      title: "Unsolicited Applications",
       url: "#",
       icon: (
-        <UsersIcon
+        <ListIcon
         />
       ),
     },
@@ -139,18 +121,10 @@ const data = {
         />
       ),
     },
-    {
-      title: "Search",
-      url: "#",
-      icon: (
-        <SearchIcon
-        />
-      ),
-    },
   ],
   documents: [
     {
-      name: "Data Library",
+      name: "Resumes",
       url: "#",
       icon: (
         <DatabaseIcon
@@ -158,7 +132,7 @@ const data = {
       ),
     },
     {
-      name: "Reports",
+      name: "Cover letters",
       url: "#",
       icon: (
         <FileChartColumnIcon
@@ -166,7 +140,7 @@ const data = {
       ),
     },
     {
-      name: "Word Assistant",
+      name: "Other files",
       url: "#",
       icon: (
         <FileIcon
@@ -180,19 +154,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              className="data-[slot=sidebar-menu-button]:p-1.5!"
-            >
-              <a href="#">
-                <CommandIcon className="size-5!" />
-                <span className="text-base font-semibold">Acme Inc.</span>
-              </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <Logo className="px-2 py-1.5" />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils"
@@ -12,6 +13,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { Logo } from "@/components/logo";
 
 export function SignupForm({
   className,
@@ -77,7 +79,7 @@ export function SignupForm({
       <Card className="overflow-hidden p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
 
-          <form className="p-6 md:p-8" onSubmit={handleSubmit}>
+          <form className="flex flex-col justify-center p-6 md:p-8 md:min-h-[35rem]" onSubmit={handleSubmit}>
             <FieldGroup>
               <div className="flex flex-col items-center gap-2 text-center">
                 <h1 className="text-2xl font-bold">Create your account</h1>
@@ -163,11 +165,16 @@ export function SignupForm({
           </form>
 
           <div className="relative hidden bg-muted md:block">
-            <img
-              src="/placeholder.svg"
-              alt="Image"
-              className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+            <Image
+              src="/images/image1.jpg"
+              alt=""
+              fill
+              className="object-cover"
+              sizes="(min-width: 768px) 50vw, 0vw"
+              priority
             />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/10 to-black/50" />
+            <Logo className="absolute bottom-6 left-6 z-10 text-white text-[2rem] lg:text-[2.5rem] xl:text-[3rem] 2xl:text-[3.5rem]" />
           </div>
         </CardContent>
       </Card>
