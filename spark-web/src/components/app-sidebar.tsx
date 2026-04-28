@@ -13,12 +13,12 @@ import {
   SidebarFooter,
   SidebarHeader,
 } from "@/components/ui/sidebar"
-import { LayoutDashboardIcon, ListIcon, FolderIcon, CameraIcon, FileTextIcon, Settings2Icon, CircleHelpIcon, DatabaseIcon, FileChartColumnIcon, FileIcon } from "lucide-react"
+import { LayoutDashboardIcon, FolderIcon, CameraIcon, FileTextIcon, Settings2Icon, CircleHelpIcon } from "lucide-react"
 
 const data = {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
+    name: "Gustav Eriksen",
+    email: "gustav.s.eriksen@gmail.com",
     avatar: "/avatars/shadcn.jpg",
   },
   navMain: [
@@ -42,7 +42,7 @@ const data = {
       title: "Unsolicited Applications",
       url: "#",
       icon: (
-        <ListIcon
+        <FolderIcon
         />
       ),
     },
@@ -127,7 +127,7 @@ const data = {
       name: "Resumes",
       url: "#",
       icon: (
-        <DatabaseIcon
+        <FolderIcon
         />
       ),
     },
@@ -135,7 +135,7 @@ const data = {
       name: "Cover letters",
       url: "#",
       icon: (
-        <FileChartColumnIcon
+        <FolderIcon
         />
       ),
     },
@@ -143,7 +143,7 @@ const data = {
       name: "Other files",
       url: "#",
       icon: (
-        <FileIcon
+        <FolderIcon
         />
       ),
     },
@@ -154,7 +154,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
-        <Logo className="px-2 py-1.5" />
+        <Logo className="px-1 py-1 h-12" />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />

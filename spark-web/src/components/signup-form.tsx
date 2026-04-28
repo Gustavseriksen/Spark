@@ -174,7 +174,7 @@ export function SignupForm({
               priority
             />
             <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/10 to-black/50" />
-            <Logo className="absolute bottom-6 left-6 z-10 text-white text-[2rem] lg:text-[2.5rem] xl:text-[3rem] 2xl:text-[3.5rem]" />
+            <Logo className="absolute bottom-6 left-6 z-10 h-8 w-auto lg:h-10 xl:h-12 2xl:h-14" />
           </div>
         </CardContent>
       </Card>
