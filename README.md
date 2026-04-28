@@ -10,40 +10,33 @@
 
 > **Status:** Currently in active development (2026).
 
-Spark is a premium, full-stack platform designed to streamline and gamify the job search process. Instead of throwing applications into the void, Spark utilizes a **Custom Value-Matching Algorithm** to score job compatibility based on personal preferences like salary, commute time, and remote flexibility.
+Spark is a full-stack platform designed to streamline the job search process. Instead of throwing applications into the void, Spark utilizes a **Custom Value-Matching Algorithm** to score job compatibility based on personal preferences like salary, commute time, and remote flexibility.
 
 ##  Visual Preview
 
-*(Currently implementing the frontend based on these UI/UX wireframes)*
+### Sign Up
+![Login Preview](./docs/assets/SignUp.png)
 
-### Authentication
-![Login Preview](./docs/assets/login.png)
+### Sign In
+![Spark Dashboard Preview](./docs/assets/SignIn.png)
 
-### The Dashboard & Analytics
-![Spark Dashboard Preview](./docs/assets/dashboard.png)
-
-### Targeted Applications
-![Targeted Applications Preview](./docs/assets/targeted.png)
-
-### Profile & Preferences
-![Profile Preview](./docs/assets/profile.png)
+### Dashboard
+![Targeted Applications Preview](./docs/assets/FrontPage.png)
 
 
 ##  Key Features
 
 * **Value-Matching Engine:** A custom Java algorithm that weighs user preferences (commute, salary, tech stack) against job descriptions to generate a personalized Match Score (%).
-* **Gamification:** Weekly application goals, streak tracking, and interactive progress rings to keep the job hunt motivating.
-* **Premium UX/UI:** Designed with a "Linear-style" aesthetic—deep dark mode, subtle borders, and expanded list views utilizing Next.js and Tailwind CSS.
 * **Decoupled Architecture:** Built as a scalable Monorepo separating the robust Spring Boot REST API from the React frontend.
 
 ##  Architecture & Tech Stack
 
 This project is structured as a Monorepo containing two decoupled applications:
 
-* **Frontend (`/spark-web`):** Next.js (App Router), React, TypeScript, Tailwind CSS.
+* **Frontend (`/spark-web`):** Next.js (App Router), React, TypeScript, Tailwind CSS, shadcn/ui.
 * **Backend (`/spark-api`):** Java 25, Spring Boot 3, Spring Data JPA, Spring Security.
 * **Database:** PostgreSQL.
-* **Documentation:** View the full [Architecture Decision Records (ADR)](./05-architecture-decisions.md) for deeper technical insights.
+* **Documentation:** View the full [Architecture Decision Records (ADR)](./docs/05-architecture-decisions.md) for deeper technical insights.
 
 ##  Local Development Setup
 
