@@ -6,6 +6,7 @@
 ![Java](https://img.shields.io/badge/Java-25-orange?style=for-the-badge&logo=openjdk)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-3-brightgreen?style=for-the-badge&logo=spring-boot)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue?style=for-the-badge&logo=postgresql)
+![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-black?style=for-the-badge)
 
 > **Status:** Currently in active development (2026).
 

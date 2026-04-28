@@ -2,14 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import localFont from "next/font/local";
-
-const satoshi = localFont({
-  src: "../../public/fonts/Satoshi-Variable.woff2",
-  variable: "--font-satoshi",
-  display: "swap",
-  weight: "300 900",
-});
 
 const geistSans = Geist({
   variable: "--font-sans",
@@ -34,7 +26,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${satoshi.variable} h-full antialiased dark`}
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
     >
       <body className="min-h-full flex flex-col">
         <TooltipProvider>
