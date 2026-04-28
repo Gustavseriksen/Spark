@@ -10,7 +10,7 @@
 
 > **Status:** Currently in active development (2026).
 
-Spark is a full-stack platform designed to streamline the job search process. Instead of throwing applications into the void, Spark utilizes a **Custom Value-Matching Algorithm** to score job compatibility based on personal preferences like salary, commute time, and remote flexibility.
+Spark is a full-stack platform designed to streamline the job search process. Instead of throwing applications into the void, Spark utilizes a Custom Value-Matching Algorithm to score job compatibility based on personal preferences like salary, commute time, and remote flexibility.
 
 ##  Visual Preview
 
