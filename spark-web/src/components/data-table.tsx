@@ -15,29 +15,10 @@ import {
   type SortingState,
   type VisibilityState,
 } from "@tanstack/react-table"
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
-import { toast } from "sonner"
 import { z } from "zod"
 
-import { useIsMobile } from "@/hooks/use-mobile"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-  type ChartConfig,
-} from "@/components/ui/chart"
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -46,7 +27,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
   Select,
@@ -56,7 +36,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Separator } from "@/components/ui/separator"
 import {
   Table,
   TableBody,
@@ -70,7 +49,8 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
-import { CircleCheckIcon, LoaderIcon, ClockIcon, ArrowUpRightIcon, EllipsisVerticalIcon, Columns3Icon, ChevronDownIcon, PlusIcon, ChevronsLeftIcon, ChevronLeftIcon, ChevronRightIcon, ChevronsRightIcon, TrendingUpIcon } from "lucide-react"
+import { CircleCheckBigIcon, LoaderIcon, CircleDashedIcon, ArrowUpRightIcon, EllipsisVerticalIcon, Columns3Icon, ChevronDownIcon, PlusIcon, ChevronsLeftIcon, ChevronLeftIcon, ChevronRightIcon, ChevronsRightIcon } from "lucide-react"
+import { TableCellViewer } from "@/components/table-cell-viewer"
 
 export const schema = z.object({
   id: z.number(),
@@ -91,7 +71,7 @@ const priorityLevel: Record<string, number> = {
   None: 0,
 }
 
-type StatusTab = "all" | "done" | "in-process" | "pending"
+type StatusTab = "all" | "submitted" | "in-process" | "pending"
 
 function PriorityDots({ priority }: { priority: string }) {
   const level = priorityLevel[priority] ?? 0
@@ -123,22 +103,35 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     header: "Company",
     cell: ({ row }) => row.original.company,
   },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => (
-      <Badge variant="outline" className="px-1.5 text-muted-foreground">
-        {row.original.status === "Done" ? (
-          <CircleCheckIcon className="fill-green-500 dark:fill-green-400" />
-        ) : row.original.status === "Pending" ? (
-          <ClockIcon />
-        ) : (
-          <LoaderIcon />
-        )}
-        {row.original.status}
+{
+  accessorKey: "status",
+  header: "Status",
+  cell: ({ row }) => {
+    const status = row.original.status
+
+    const styles: Record<string, string> = {
+      Submitted:
+        "border-yellow-950 text-yellow-700 bg-[linear-gradient(110deg,#1a1500,45%,#854d0e,55%,#1a1500)] bg-[length:200%_100%]",
+      Pending:
+        "border-red-950 text-red-700 bg-[linear-gradient(110deg,#1a0505,45%,#7f1d1d,55%,#1a0505)] bg-[length:200%_100%]",
+      "In Process":
+        "border-amber-950 text-amber-700 bg-[linear-gradient(110deg,#100800,45%,#713f12,55%,#100800)] bg-[length:200%_100%]",
+    }
+
+    const Icon =
+      status === "Submitted" ? CircleCheckBigIcon
+      : status === "Pending" ? CircleDashedIcon
+      : LoaderIcon
+
+    return (
+      <Badge variant="outline" className={`px-1.5 ${styles[status] ?? "text-muted-foreground"}`}>
+        <Icon />
+        {status}
       </Badge>
-    ),
+    )
   },
+},
+
   {
     accessorKey: "postDate",
     header: "Post Date",
@@ -206,7 +199,7 @@ export function DataTable({
   const statusCounts = React.useMemo(
     () => ({
       all: data.length,
-      done: data.filter((item) => item.status === "Done").length,
+      submitted: data.filter((item) => item.status === "Submitted").length,
       inProcess: data.filter((item) => item.status === "In Process").length,
       pending: data.filter((item) => item.status === "Pending").length,
     }),
@@ -218,7 +211,7 @@ export function DataTable({
     }
 
     const statusByTab: Record<Exclude<StatusTab, "all">, string> = {
-      done: "Done",
+      submitted: "Submitted",
       "in-process": "In Process",
       pending: "Pending",
     }
@@ -276,7 +269,7 @@ export function DataTable({
           <SelectContent>
             <SelectGroup>
               <SelectItem value="all">All</SelectItem>
-              <SelectItem value="done">Done</SelectItem>
+              <SelectItem value="submitted">Submitted</SelectItem>
               <SelectItem value="in-process">In Process</SelectItem>
               <SelectItem value="pending">Pending</SelectItem>
             </SelectGroup>
@@ -286,8 +279,8 @@ export function DataTable({
           <TabsTrigger value="all">
             All <Badge variant="secondary">{statusCounts.all}</Badge>
           </TabsTrigger>
-          <TabsTrigger value="done">
-            Done <Badge variant="secondary">{statusCounts.done}</Badge>
+          <TabsTrigger value="submitted">
+            Submitted <Badge variant="secondary">{statusCounts.submitted}</Badge>
           </TabsTrigger>
           <TabsTrigger value="in-process">
             In Process <Badge variant="secondary">{statusCounts.inProcess}</Badge>
@@ -332,7 +325,7 @@ export function DataTable({
           <Button variant="outline" size="sm">
             <PlusIcon
             />
-            <span className="hidden lg:inline">Add Section</span>
+            <span className="hidden lg:inline">Add</span>
           </Button>
         </div>
       </div>
@@ -481,165 +474,5 @@ export function DataTable({
         </div>
       </div>
     </Tabs>
-  )
-}
-
-const chartData = [
-  { month: "January", desktop: 186, mobile: 80 },
-  { month: "February", desktop: 305, mobile: 200 },
-  { month: "March", desktop: 237, mobile: 120 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "May", desktop: 209, mobile: 130 },
-  { month: "June", desktop: 214, mobile: 140 },
-]
-
-const chartConfig = {
-  desktop: {
-    label: "Desktop",
-    color: "var(--primary)",
-  },
-  mobile: {
-    label: "Mobile",
-    color: "var(--primary)",
-  },
-} satisfies ChartConfig
-
-function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
-  const isMobile = useIsMobile()
-
-  return (
-    <Drawer direction={isMobile ? "bottom" : "right"}>
-      <DrawerTrigger asChild>
-        <Button variant="link" className="w-fit px-0 text-left text-foreground">
-          {item.title}
-        </Button>
-      </DrawerTrigger>
-      <DrawerContent>
-        <DrawerHeader className="gap-1">
-          <DrawerTitle>{item.title}</DrawerTitle>
-          <DrawerDescription>
-            {item.company}
-          </DrawerDescription>
-        </DrawerHeader>
-        <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm">
-          {!isMobile && (
-            <>
-              <ChartContainer config={chartConfig}>
-                <AreaChart
-                  accessibilityLayer
-                  data={chartData}
-                  margin={{
-                    left: 0,
-                    right: 10,
-                  }}
-                >
-                  <CartesianGrid vertical={false} />
-                  <XAxis
-                    dataKey="month"
-                    tickLine={false}
-                    axisLine={false}
-                    tickMargin={8}
-                    tickFormatter={(value) => value.slice(0, 3)}
-                    hide
-                  />
-                  <ChartTooltip
-                    cursor={false}
-                    content={<ChartTooltipContent indicator="dot" />}
-                  />
-                  <Area
-                    dataKey="mobile"
-                    type="natural"
-                    fill="var(--color-mobile)"
-                    fillOpacity={0.6}
-                    stroke="var(--color-mobile)"
-                    stackId="a"
-                  />
-                  <Area
-                    dataKey="desktop"
-                    type="natural"
-                    fill="var(--color-desktop)"
-                    fillOpacity={0.4}
-                    stroke="var(--color-desktop)"
-                    stackId="a"
-                  />
-                </AreaChart>
-              </ChartContainer>
-              <Separator />
-              <div className="grid gap-2">
-                <div className="flex gap-2 leading-none font-medium">
-                  Trending up by 5.2% this month{" "}
-                  <TrendingUpIcon className="size-4" />
-                </div>
-                <div className="text-muted-foreground">
-                  Showing total visitors for the last 6 months. This is just
-                  some random text to test the layout. It spans multiple lines
-                  and should wrap around.
-                </div>
-              </div>
-              <Separator />
-            </>
-          )}
-          <form className="flex flex-col gap-4">
-            <div className="flex flex-col gap-3">
-              <Label htmlFor="title">Title</Label>
-              <Input id="title" defaultValue={item.title} />
-            </div>
-            <div className="flex flex-col gap-3">
-              <Label htmlFor="company">Company</Label>
-              <Input id="company" defaultValue={item.company} />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="status">Status</Label>
-                <Select defaultValue={item.status}>
-                  <SelectTrigger id="status" className="w-full">
-                    <SelectValue placeholder="Select a status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectItem value="Done">Done</SelectItem>
-                      <SelectItem value="In Process">In Process</SelectItem>
-                      <SelectItem value="Pending">Pending</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="priority">Priority</Label>
-                <Select defaultValue={item.priority}>
-                  <SelectTrigger id="priority" className="w-full">
-                    <SelectValue placeholder="Select a priority" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectItem value="Very High">Very High</SelectItem>
-                      <SelectItem value="High">High</SelectItem>
-                      <SelectItem value="Medium">Medium</SelectItem>
-                      <SelectItem value="Low">Low</SelectItem>
-                      <SelectItem value="Very Low">Very Low</SelectItem>
-                      <SelectItem value="None">None</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div className="flex flex-col gap-3">
-              <Label htmlFor="postDate">Post Date</Label>
-              <Input id="postDate" defaultValue={item.postDate} />
-            </div>
-            <div className="flex flex-col gap-3">
-              <Label htmlFor="link">Link</Label>
-              <Input id="link" defaultValue={item.link} />
-            </div>
-          </form>
-        </div>
-        <DrawerFooter>
-          <Button>Submit</Button>
-          <DrawerClose asChild>
-            <Button variant="outline">Done</Button>
-          </DrawerClose>
-        </DrawerFooter>
-      </DrawerContent>
-    </Drawer>
   )
 }
