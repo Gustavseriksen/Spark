@@ -24,7 +24,7 @@ const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "#",
+      url: "/dashboard",
       icon: (
         <LayoutDashboardIcon
         />
@@ -32,7 +32,7 @@ const data = {
     },
     {
       title: "Targeted Applications",
-      url: "#",
+      url: "/targeted-applications",
       icon: (
         <FolderIcon
         />
@@ -40,7 +40,7 @@ const data = {
     },
     {
       title: "Unsolicited Applications",
-      url: "#",
+      url: "/unsolicited-applications",
       icon: (
         <FolderIcon
         />
