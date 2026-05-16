@@ -5,8 +5,14 @@
     "company": "Stripe",
     "status": "In Process",
     "postDate": "15/05/2026",
+    "startDate": "01/08/2026",
     "priority": "Very High",
-    "link": "https://example.com/jobs/1"
+    "link": "https://example.com/jobs/1",
+    "description": "About the Role\n\nStripe is looking for a talented and passionate Frontend Engineer to join our growing product team. In this role, you will be responsible for building and maintaining high-quality web interfaces that are used by millions of businesses around the world. You will work closely with designers, product managers, and backend engineers to deliver polished, accessible, and performant user experiences.\n\nWe care deeply about the craft of frontend engineering — clean component architecture, thoughtful state management, and pixel-perfect implementation are things we take seriously. If you love building things that people actually use and care about the details that make software feel great, this role is for you.\n\nWhat You'll Do\n\nDesign and build new user-facing features across Stripe's web products using React and TypeScript. Collaborate with product designers to translate Figma designs into responsive, accessible components. Improve the performance of existing pages and identify bottlenecks through profiling and measurement. Write thorough unit and integration tests to ensure reliability and prevent regressions. Participate in code reviews and contribute to frontend best practices and shared component libraries. Work cross-functionally with backend teams to define and consume APIs. Contribute to architectural decisions and help shape the long-term direction of the frontend codebase.\n\nWho You Are\n\nYou have 3+ years of experience building production web applications with React. You are proficient in TypeScript and understand how to use it to write safer, more maintainable code. You have a strong grasp of web fundamentals — HTML, CSS, and the browser rendering model. You are comfortable working in a fast-paced, collaborative environment and can manage multiple priorities effectively. You care about accessibility and understand how to build interfaces that work for everyone. You are familiar with modern build tooling such as Vite, webpack, or similar. Experience with design systems or component libraries is a strong plus.\n\nWhat We Offer\n\nAt Stripe, we believe that great people build great products. We offer a competitive salary and equity package, comprehensive health benefits, a generous learning and development budget, and a flexible working environment. We have offices in San Francisco, New York, Dublin, London, Singapore, and Tokyo, and we support hybrid and remote arrangements for many roles.\n\nStripe is an equal opportunity employer. We celebrate diversity and are committed to creating an inclusive environment for all employees. We do not discriminate on the basis of race, religion, color, national origin, gender, sexual orientation, age, marital status, veteran status, or disability.",
+    "motivationLetter": { "name": "motivation-letter-stripe.pdf", "size": "2.4 MB" },
+    "resume": { "name": "resume-2026.pdf", "size": "1.1 MB" },
+    "additionalNotes": null,
+    "additionalFiles": null
   },
   {
     "id": 2,
@@ -14,8 +20,14 @@
     "company": "Spotify",
     "status": "Submitted",
     "postDate": "10/05/2026",
+    "startDate": "01/09/2026",
     "priority": "High",
-    "link": "https://example.com/jobs/2"
+    "link": "https://example.com/jobs/2",
+    "description": "test",
+    "motivationLetter": null,
+    "resume": { "name": "resume-2026.pdf", "size": "1.1 MB" },
+    "additionalNotes": null,
+    "additionalFiles": null
   },
   {
     "id": 3,
@@ -23,8 +35,14 @@
     "company": "Microsoft",
     "status": "Pending",
     "postDate": "18/05/2026",
+    "startDate": "15/08/2026",
     "priority": "Medium",
-    "link": "https://example.com/jobs/3"
+    "link": "https://example.com/jobs/3",
+    "description": "test",
+    "motivationLetter": null,
+    "resume": null,
+    "additionalNotes": null,
+    "additionalFiles": null
   },
   {
     "id": 4,
@@ -32,17 +50,29 @@
     "company": "Google",
     "status": "In Process",
     "postDate": "12/05/2026",
+    "startDate": "01/10/2026",
     "priority": "Low",
-    "link": "https://example.com/jobs/4"
+    "link": "https://example.com/jobs/4",
+    "description": "test",
+    "motivationLetter": null,
+    "resume": null,
+    "additionalNotes": null,
+    "additionalFiles": null
   },
-    {
+  {
     "id": 5,
     "title": "Software Engineer",
     "company": "Amazon",
     "status": "In Process",
     "postDate": "11/05/2026",
+    "startDate": "01/07/2026",
     "priority": "Very Low",
-    "link": "https://example.com/jobs/5"
+    "link": "https://example.com/jobs/5",
+    "description": "test",
+    "motivationLetter": null,
+    "resume": null,
+    "additionalNotes": null,
+    "additionalFiles": null
   },
   {
     "id": 6,
@@ -50,7 +80,13 @@
     "company": "Netflix",
     "status": "Pending",
     "postDate": "20/05/2026",
+    "startDate": "01/11/2026",
     "priority": "None",
-    "link": "https://example.com/jobs/5"
+    "link": "https://example.com/jobs/6",
+    "description": "test",
+    "motivationLetter": null,
+    "resume": null,
+    "additionalNotes": null,
+    "additionalFiles": null
   }
 ]

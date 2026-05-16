@@ -52,14 +52,22 @@ import {
 import { CircleCheckBigIcon, LoaderIcon, CircleDashedIcon, ArrowUpRightIcon, EllipsisVerticalIcon, Columns3Icon, ChevronDownIcon, PlusIcon, ChevronsLeftIcon, ChevronLeftIcon, ChevronRightIcon, ChevronsRightIcon } from "lucide-react"
 import { TableCellViewer } from "@/components/table-cell-viewer"
 
+const fileEntry = z.object({ name: z.string(), size: z.string() }).nullable()
+
 export const schema = z.object({
   id: z.number(),
   title: z.string(),
   company: z.string(),
   status: z.string(),
   postDate: z.string(),
+  startDate: z.string(),
   priority: z.string(),
   link: z.string(),
+  description: z.string(),
+  motivationLetter: fileEntry,
+  resume: fileEntry,
+  additionalNotes: fileEntry,
+  additionalFiles: fileEntry,
 })
 
 const priorityLevel: Record<string, number> = {
