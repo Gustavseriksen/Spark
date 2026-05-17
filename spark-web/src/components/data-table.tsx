@@ -63,11 +63,14 @@ export const schema = z.object({
   startDate: z.string(),
   priority: z.string(),
   link: z.string(),
+  appliedDate: z.string().nullable(),
   description: z.string(),
   motivationLetter: fileEntry,
   resume: fileEntry,
   additionalNotes: fileEntry,
   additionalFiles: fileEntry,
+  interviewOffer: z.string().nullable(),
+  jobOffer: z.string().nullable(),
 })
 
 const priorityLevel: Record<string, number> = {
