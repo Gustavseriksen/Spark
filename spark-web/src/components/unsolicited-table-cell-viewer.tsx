@@ -2,7 +2,7 @@
 
 import React, { useState } from "react"
 import { format, parse } from "date-fns"
-import { ArrowUpRightIcon, ChevronDownIcon, CircleCheckBigIcon, CircleDashedIcon, CircleIcon, FileTextIcon, LoaderIcon, PaperclipIcon } from "lucide-react"
+import { ArrowUpRightIcon, CircleCheckBigIcon, CircleDashedIcon, CircleIcon, LoaderIcon } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -36,30 +36,20 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs"
 
-interface FileEntry {
-  name: string
-  size: string
-}
-
-interface TableCellViewerItem {
+export interface UnsolicitedTableCellViewerItem {
   id: number
-  title: string
-  company: string
-  status: string
-  postDate: string
+  company_name: string
+  about: string
+  size: string
+  industry: string[]
+  address: string
+  website_url: string
   priority: string
-  link: string
-  startDate: string
-  appliedDate: string | null
-  description: string
-  motivationLetter: FileEntry | null
-  resume: FileEntry | null
-  additionalFiles: FileEntry | null
-  applicationFollowUp: string | null
-  interviewFollowUp: string | null
-  interviewOffer: string | null
-  jobOffer: string | null
+  status: string
   salary: string
+  followUp: string | null
+  hasInterview: string | null
+  hasOffer: string | null
 }
 
 const statusStyles: Record<string, string> = {
@@ -79,54 +69,6 @@ function PriorityDots({ priority }: { priority: string }) {
       {Array.from({ length: 5 }).map((_, i) => (
         <div key={i} className={`size-3 rounded-full ${i < level ? "bg-foreground" : "bg-foreground/20"}`} />
       ))}
-    </div>
-  )
-}
-
-function FileRow({
-  label,
-  icon: Icon,
-  file,
-  mode = "read",
-}: {
-  label: string
-  icon: React.ElementType
-  file: FileEntry | null
-  mode?: "read" | "edit"
-}) {
-  if (file) {
-    return (
-      <div className="flex flex-col gap-1">
-        <span className="text-xs text-muted-foreground">{label}</span>
-        <div className="flex items-center gap-3 rounded-lg border bg-muted p-3">
-          <Icon className="size-4 shrink-0 text-muted-foreground" />
-          <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-            <span className="truncate text-sm font-medium">{file.name}</span>
-            <span className="text-xs text-muted-foreground">{file.size}</span>
-          </div>
-          {mode === "edit" ? (
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm">Edit</Button>
-              <Button variant="destructive" size="sm" className="border-destructive/40">Delete</Button>
-            </div>
-          ) : (
-            <Button variant="outline" size="sm">Open</Button>
-          )}
-        </div>
-      </div>
-    )
-  }
-  return (
-    <div className="flex flex-col gap-1">
-      <span className="text-xs text-muted-foreground">{label}</span>
-      <div className="flex items-center gap-3 rounded-lg border border-dashed p-3">
-        <Icon className="size-4 shrink-0 text-muted-foreground" />
-        <div className="flex flex-1 flex-col gap-0.5">
-          <span className="text-sm font-medium">No file yet</span>
-          <span className="text-xs text-muted-foreground">Upload a file from your computer</span>
-        </div>
-        <Button variant="outline" size="sm">Upload File</Button>
-      </div>
     </div>
   )
 }
@@ -183,23 +125,30 @@ function OfferRow({ label, date }: { label: string; date: string | null }) {
   )
 }
 
-export function AddApplicationDrawer({ children }: { children: React.ReactNode }) {
-  const [postDate, setPostDate] = useState<Date | undefined>()
-  const [startDate, setStartDate] = useState<Date | undefined>()
+function StatusBadge({ status }: { status: string }) {
+  const Icon = status === "Submitted" ? CircleCheckBigIcon : status === "Pending" ? CircleDashedIcon : LoaderIcon
+  return (
+    <Badge variant="outline" className={`px-1.5 ${statusStyles[status] ?? "text-muted-foreground"}`}>
+      <Icon />
+      {status}
+    </Badge>
+  )
+}
 
+export function AddUnsolicitedApplicationDrawer({ children }: { children: React.ReactNode }) {
   return (
     <Drawer direction="right">
       <DrawerTrigger asChild>{children}</DrawerTrigger>
       <DrawerContent>
         <DrawerHeader>
-          <DrawerTitle>New Application</DrawerTitle>
+          <DrawerTitle>New Unsolicited Application</DrawerTitle>
         </DrawerHeader>
         <div className="flex flex-1 overflow-hidden md:flex-row">
-          {/* Left panel - description */}
+          {/* Left panel - about */}
           <div className="flex w-3/5 shrink-0 flex-col overflow-hidden px-4 py-2">
             <Textarea
               className="no-scrollbar flex-1 resize-none text-sm leading-relaxed"
-              placeholder="Enter job description..."
+              placeholder="Enter company description..."
             />
           </div>
 
@@ -208,12 +157,8 @@ export function AddApplicationDrawer({ children }: { children: React.ReactNode }
           {/* Right panel */}
           <div className="no-scrollbar flex flex-1 flex-col gap-4 overflow-y-auto px-4 py-2 text-sm">
             <div className="flex flex-col gap-3">
-              <Label htmlFor="add-title">Title</Label>
-              <Input id="add-title" placeholder="Job title" />
-            </div>
-            <div className="flex flex-col gap-3">
-              <Label htmlFor="add-company">Company</Label>
-              <Input id="add-company" placeholder="Company name" />
+              <Label htmlFor="add-company-name">Company Name</Label>
+              <Input id="add-company-name" placeholder="Company name" />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-3">
@@ -252,59 +197,30 @@ export function AddApplicationDrawer({ children }: { children: React.ReactNode }
             </div>
             <Separator />
             <div className="flex flex-col gap-3">
-              <Label>Posted Date</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    data-empty={!postDate}
-                    className="w-full justify-between text-left font-normal data-[empty=true]:text-muted-foreground"
-                  >
-                    {postDate ? format(postDate, "PPP") : <span>Pick a date</span>}
-                    <ChevronDownIcon />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar mode="single" selected={postDate} onSelect={setPostDate} />
-                </PopoverContent>
-              </Popover>
+              <Label htmlFor="add-size">Size</Label>
+              <Input id="add-size" placeholder="e.g. 100-250 employees" />
             </div>
             <div className="flex flex-col gap-3">
-              <Label>Start Date</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    data-empty={!startDate}
-                    className="w-full justify-between text-left font-normal data-[empty=true]:text-muted-foreground"
-                  >
-                    {startDate ? format(startDate, "PPP") : <span>Pick a date</span>}
-                    <ChevronDownIcon />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar mode="single" selected={startDate} onSelect={setStartDate} />
-                </PopoverContent>
-              </Popover>
+              <Label htmlFor="add-industry">Industry</Label>
+              <Input id="add-industry" placeholder="Tag1, Tag2, Tag3" />
             </div>
             <div className="flex flex-col gap-3">
-              <Label htmlFor="add-link">Link</Label>
-              <Input id="add-link" placeholder="https://..." />
+              <Label htmlFor="add-address">Address</Label>
+              <Input id="add-address" placeholder="City, Country" />
+            </div>
+            <div className="flex flex-col gap-3">
+              <Label htmlFor="add-website">Website URL</Label>
+              <Input id="add-website" placeholder="https://..." />
             </div>
             <div className="flex flex-col gap-3">
               <Label htmlFor="add-salary">Salary</Label>
               <Input id="add-salary" placeholder="e.g. 4000 € per month" />
             </div>
             <Separator />
-            <FileRow label="Motivation Letter" icon={FileTextIcon} file={null} mode="edit" />
-            <FileRow label="Resume" icon={FileTextIcon} file={null} mode="edit" />
-            <FileRow label="Additional Files" icon={PaperclipIcon} file={null} mode="edit" />
-            <Separator />
             <div className="flex flex-col gap-2">
-              <OfferRow label="Application Follow-up" date={null} />
-              <OfferRow label="Interview Follow-up" date={null} />
-              <OfferRow label="Interview Offer" date={null} />
-              <OfferRow label="Job Offer" date={null} />
+              <OfferRow label="Follow-up" date={null} />
+              <OfferRow label="Has Interview" date={null} />
+              <OfferRow label="Has Offer" date={null} />
             </div>
             <DrawerFooter className="mt-auto px-0">
               <Button>Submit</Button>
@@ -319,34 +235,26 @@ export function AddApplicationDrawer({ children }: { children: React.ReactNode }
   )
 }
 
-export function TableCellViewer({ item }: { item: TableCellViewerItem }) {
+export function UnsolicitedTableCellViewer({ item }: { item: UnsolicitedTableCellViewerItem }) {
   return (
     <Drawer direction="right">
       <DrawerTrigger asChild>
         <Button variant="link" className="w-fit px-0 text-left text-foreground">
-          {item.title}
+          {item.company_name}
         </Button>
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader className="flex flex-row items-start gap-4">
           <div className="flex w-3/5 shrink-0 flex-col gap-1">
-            <DrawerTitle>{item.title}</DrawerTitle>
-            <DrawerDescription>{item.company}</DrawerDescription>
+            <DrawerTitle>{item.company_name}</DrawerTitle>
+            <DrawerDescription>{item.address}</DrawerDescription>
           </div>
-          <div className="flex flex-1 flex-wrap items-center justify-between gap-4">
+          <div className="flex flex-1 flex-wrap items-center justify-end gap-4">
             <Badge asChild>
-              <a href={item.link} target="_blank" rel="noopener noreferrer">
-                Open Link <ArrowUpRightIcon data-icon="inline-end" />
+              <a href={item.website_url} target="_blank" rel="noopener noreferrer">
+                Open Website <ArrowUpRightIcon data-icon="inline-end" />
               </a>
             </Badge>
-            <div className="flex flex-col gap-1 text-right">
-              <span className="text-xs text-muted-foreground">Posted Date</span>
-              <span className="text-sm">{item.postDate}</span>
-            </div>
-            <div className="flex flex-col gap-1 text-right">
-              <span className="text-xs text-muted-foreground">Start Date</span>
-              <span className="text-sm">{item.startDate}</span>
-            </div>
           </div>
         </DrawerHeader>
         <Tabs defaultValue="read" className="flex flex-col flex-1 overflow-hidden">
@@ -357,41 +265,27 @@ export function TableCellViewer({ item }: { item: TableCellViewerItem }) {
 
           {/* Read tab */}
           <TabsContent value="read" className="flex flex-1 overflow-hidden md:flex-row">
-            {/* Left panel - description */}
+            {/* Left panel - about */}
             <div className="no-scrollbar w-3/5 shrink-0 overflow-y-auto px-4 py-2 text-sm">
-              <p className="whitespace-pre-wrap leading-relaxed">{item.description}</p>
+              <p className="whitespace-pre-wrap leading-relaxed">{item.about}</p>
             </div>
 
             <Separator orientation="vertical" className="hidden md:block" />
 
             {/* Right panel */}
             <div className="no-scrollbar flex flex-1 flex-col gap-4 overflow-y-auto px-4 py-2">
-              <FileRow label="Motivation Letter" icon={FileTextIcon} file={item.motivationLetter} />
-              <FileRow label="Resume" icon={FileTextIcon} file={item.resume} />
-              <FileRow label="Additional Files" icon={PaperclipIcon} file={item.additionalFiles} />
-
-              <Separator />
-
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1">
                   <span className="text-xs text-muted-foreground">Status</span>
-                  {(() => {
-                    const Icon = item.status === "Submitted" ? CircleCheckBigIcon : item.status === "Pending" ? CircleDashedIcon : LoaderIcon
-                    return (
-                      <Badge variant="outline" className={`px-1.5 ${statusStyles[item.status] ?? "text-muted-foreground"}`}>
-                        <Icon />
-                        {item.status}
-                      </Badge>
-                    )
-                  })()}
-                </div>
-                <div className="flex flex-col gap-1">
-                  <span className="text-xs text-muted-foreground">Applied Date</span>
-                  <span className="text-sm">{item.appliedDate ?? "—"}</span>
+                  <StatusBadge status={item.status} />
                 </div>
                 <div className="flex flex-col gap-1">
                   <span className="text-xs text-muted-foreground">Priority</span>
                   <PriorityDots priority={item.priority} />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <span className="text-xs text-muted-foreground">Size</span>
+                  <span className="text-sm">{item.size || "—"}</span>
                 </div>
                 <div className="flex flex-col gap-1">
                   <span className="text-xs text-muted-foreground">Salary</span>
@@ -399,26 +293,40 @@ export function TableCellViewer({ item }: { item: TableCellViewerItem }) {
                 </div>
               </div>
 
+              <div className="flex flex-col gap-1">
+                <span className="text-xs text-muted-foreground">Industry</span>
+                <div className="flex flex-wrap gap-1">
+                  {item.industry.length > 0 ? (
+                    item.industry.map((tag) => (
+                      <Badge key={tag} variant="outline">
+                        {tag}
+                      </Badge>
+                    ))
+                  ) : (
+                    <span className="text-sm">—</span>
+                  )}
+                </div>
+              </div>
+
               <Separator />
 
               <div className="flex flex-col gap-2">
-                <OfferRow label="Application Follow-up" date={item.applicationFollowUp} />
-                <OfferRow label="Interview Follow-up" date={item.interviewFollowUp} />
-                <OfferRow label="Interview Offer" date={item.interviewOffer} />
-                <OfferRow label="Job Offer" date={item.jobOffer} />
+                <OfferRow label="Follow-up" date={item.followUp} />
+                <OfferRow label="Has Interview" date={item.hasInterview} />
+                <OfferRow label="Has Offer" date={item.hasOffer} />
               </div>
             </div>
           </TabsContent>
 
           {/* Edit tab */}
           <TabsContent value="edit" className="flex flex-1 overflow-hidden md:flex-row">
-            {/* Left panel - description */}
+            {/* Left panel - about */}
             <div className="flex w-3/5 shrink-0 flex-col overflow-hidden px-4 py-2">
               <Textarea
-                id="description"
-                defaultValue={item.description}
+                id="about"
+                defaultValue={item.about}
                 className="no-scrollbar flex-1 resize-none text-sm leading-relaxed"
-                placeholder="Enter job description..."
+                placeholder="Enter company description..."
               />
             </div>
 
@@ -427,12 +335,8 @@ export function TableCellViewer({ item }: { item: TableCellViewerItem }) {
             {/* Right panel */}
             <div className="no-scrollbar flex flex-1 flex-col gap-4 overflow-y-auto px-4 py-2 text-sm">
               <div className="flex flex-col gap-3">
-                <Label htmlFor="title">Title</Label>
-                <Input id="title" defaultValue={item.title} />
-              </div>
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="company">Company</Label>
-                <Input id="company" defaultValue={item.company} />
+                <Label htmlFor="company-name">Company Name</Label>
+                <Input id="company-name" defaultValue={item.company_name} />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-3">
@@ -471,67 +375,34 @@ export function TableCellViewer({ item }: { item: TableCellViewerItem }) {
               </div>
               <Separator />
               <div className="flex flex-col gap-3">
-                <Label>Posted Date</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      data-empty={!item.postDate}
-                      className="w-full justify-between text-left font-normal data-[empty=true]:text-muted-foreground"
-                    >
-                      {item.postDate ? format(parse(item.postDate, "dd/MM/yyyy", new Date()), "PPP") : <span>Pick a date</span>}
-                      <ChevronDownIcon />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={item.postDate ? parse(item.postDate, "dd/MM/yyyy", new Date()) : undefined}
-                      defaultMonth={item.postDate ? parse(item.postDate, "dd/MM/yyyy", new Date()) : undefined}
-                    />
-                  </PopoverContent>
-                </Popover>
+                <Label htmlFor="size">Size</Label>
+                <Input id="size" defaultValue={item.size} placeholder="e.g. 100-250 employees" />
               </div>
               <div className="flex flex-col gap-3">
-                <Label>Start Date</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      data-empty={!item.startDate}
-                      className="w-full justify-between text-left font-normal data-[empty=true]:text-muted-foreground"
-                    >
-                      {item.startDate ? format(parse(item.startDate, "dd/MM/yyyy", new Date()), "PPP") : <span>Pick a date</span>}
-                      <ChevronDownIcon />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={item.startDate ? parse(item.startDate, "dd/MM/yyyy", new Date()) : undefined}
-                      defaultMonth={item.startDate ? parse(item.startDate, "dd/MM/yyyy", new Date()) : undefined}
-                    />
-                  </PopoverContent>
-                </Popover>
+                <Label htmlFor="industry">Industry</Label>
+                <Input
+                  id="industry"
+                  defaultValue={item.industry.join(", ")}
+                  placeholder="Tag1, Tag2, Tag3"
+                />
               </div>
               <div className="flex flex-col gap-3">
-                <Label htmlFor="link">Link</Label>
-                <Input id="link" defaultValue={item.link} />
+                <Label htmlFor="address">Address</Label>
+                <Input id="address" defaultValue={item.address} placeholder="City, Country" />
+              </div>
+              <div className="flex flex-col gap-3">
+                <Label htmlFor="website-url">Website URL</Label>
+                <Input id="website-url" defaultValue={item.website_url} />
               </div>
               <div className="flex flex-col gap-3">
                 <Label htmlFor="salary">Salary</Label>
                 <Input id="salary" defaultValue={item.salary} placeholder="e.g. 4000 € per month" />
               </div>
               <Separator />
-              <FileRow label="Motivation Letter" icon={FileTextIcon} file={item.motivationLetter} mode="edit" />
-              <FileRow label="Resume" icon={FileTextIcon} file={item.resume} mode="edit" />
-              <FileRow label="Additional Files" icon={PaperclipIcon} file={item.additionalFiles} mode="edit" />
-              <Separator />
               <div className="flex flex-col gap-2">
-                <OfferRow label="Application Follow-up" date={item.applicationFollowUp} />
-                <OfferRow label="Interview Follow-up" date={item.interviewFollowUp} />
-                <OfferRow label="Interview Offer" date={item.interviewOffer} />
-                <OfferRow label="Job Offer" date={item.jobOffer} />
+                <OfferRow label="Follow-up" date={item.followUp} />
+                <OfferRow label="Has Interview" date={item.hasInterview} />
+                <OfferRow label="Has Offer" date={item.hasOffer} />
               </div>
               <DrawerFooter className="mt-auto px-0">
                 <Button>Submit</Button>

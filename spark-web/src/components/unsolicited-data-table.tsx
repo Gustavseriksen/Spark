@@ -50,27 +50,22 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs"
 import { CircleCheckBigIcon, LoaderIcon, CircleDashedIcon, ArrowUpRightIcon, EllipsisVerticalIcon, Columns3Icon, ChevronDownIcon, PlusIcon, ChevronsLeftIcon, ChevronLeftIcon, ChevronRightIcon, ChevronsRightIcon } from "lucide-react"
-import { TableCellViewer, AddApplicationDrawer } from "@/components/table-cell-viewer"
-
-const fileEntry = z.object({ name: z.string(), size: z.string() }).nullable()
+import { UnsolicitedTableCellViewer, AddUnsolicitedApplicationDrawer } from "@/components/unsolicited-table-cell-viewer"
 
 export const schema = z.object({
   id: z.number(),
-  title: z.string(),
-  company: z.string(),
-  status: z.string(),
-  postDate: z.string(),
-  startDate: z.string(),
+  company_name: z.string(),
+  about: z.string(),
+  size: z.string(),
+  industry: z.array(z.string()),
+  address: z.string(),
+  website_url: z.string(),
   priority: z.string(),
-  link: z.string(),
-  appliedDate: z.string().nullable(),
-  description: z.string(),
-  motivationLetter: fileEntry,
-  resume: fileEntry,
-  additionalFiles: fileEntry,
-  interviewOffer: z.string().nullable(),
-  jobOffer: z.string().nullable(),
+  status: z.string(),
   salary: z.string(),
+  followUp: z.string().nullable(),
+  hasInterview: z.string().nullable(),
+  hasOffer: z.string().nullable(),
 })
 
 const priorityLevel: Record<string, number> = {
@@ -102,51 +97,68 @@ function PriorityDots({ priority }: { priority: string }) {
 
 const columns: ColumnDef<z.infer<typeof schema>>[] = [
   {
-    accessorKey: "title",
-    header: "Title",
+    accessorKey: "company_name",
+    header: "Company Name",
     cell: ({ row }) => {
-      return <TableCellViewer item={row.original} />
+      return <UnsolicitedTableCellViewer item={row.original} />
     },
     enableHiding: false,
   },
   {
-    accessorKey: "company",
-    header: "Company",
-    cell: ({ row }) => row.original.company,
+    accessorKey: "industry",
+    header: "Industry",
+    cell: ({ row }) => {
+      const tags = row.original.industry
+      const visible = tags.slice(0, 2)
+      const remaining = tags.length - visible.length
+      return (
+        <div className="flex flex-wrap items-center gap-1">
+          {visible.map((tag) => (
+            <Badge key={tag} variant="outline" className="px-1.5">
+              {tag}
+            </Badge>
+          ))}
+          {remaining > 0 && (
+            <Badge variant="outline" className="px-1.5 text-muted-foreground">
+              +{remaining}
+            </Badge>
+          )}
+        </div>
+      )
+    },
   },
-{
-  accessorKey: "status",
-  header: "Status",
-  cell: ({ row }) => {
-    const status = row.original.status
-
-    const styles: Record<string, string> = {
-      Submitted:
-        "border-yellow-950 text-yellow-700 bg-[linear-gradient(110deg,#1a1500,45%,#854d0e,55%,#1a1500)] bg-[length:200%_100%]",
-      Pending:
-        "border-red-950 text-red-700 bg-[linear-gradient(110deg,#1a0505,45%,#7f1d1d,55%,#1a0505)] bg-[length:200%_100%]",
-      "In Process":
-        "border-amber-950 text-amber-700 bg-[linear-gradient(110deg,#100800,45%,#713f12,55%,#100800)] bg-[length:200%_100%]",
-    }
-
-    const Icon =
-      status === "Submitted" ? CircleCheckBigIcon
-      : status === "Pending" ? CircleDashedIcon
-      : LoaderIcon
-
-    return (
-      <Badge variant="outline" className={`px-1.5 ${styles[status] ?? "text-muted-foreground"}`}>
-        <Icon />
-        {status}
-      </Badge>
-    )
-  },
-},
-
   {
-    accessorKey: "postDate",
-    header: "Post Date",
-    cell: ({ row }) => row.original.postDate,
+    accessorKey: "size",
+    header: "Size",
+    cell: ({ row }) => row.original.size || "—",
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => {
+      const status = row.original.status
+
+      const styles: Record<string, string> = {
+        Submitted:
+          "border-yellow-950 text-yellow-700 bg-[linear-gradient(110deg,#1a1500,45%,#854d0e,55%,#1a1500)] bg-[length:200%_100%]",
+        Pending:
+          "border-red-950 text-red-700 bg-[linear-gradient(110deg,#1a0505,45%,#7f1d1d,55%,#1a0505)] bg-[length:200%_100%]",
+        "In Process":
+          "border-amber-950 text-amber-700 bg-[linear-gradient(110deg,#100800,45%,#713f12,55%,#100800)] bg-[length:200%_100%]",
+      }
+
+      const Icon =
+        status === "Submitted" ? CircleCheckBigIcon
+        : status === "Pending" ? CircleDashedIcon
+        : LoaderIcon
+
+      return (
+        <Badge variant="outline" className={`px-1.5 ${styles[status] ?? "text-muted-foreground"}`}>
+          <Icon />
+          {status}
+        </Badge>
+      )
+    },
   },
   {
     accessorKey: "priority",
@@ -158,8 +170,8 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     header: () => null,
     cell: ({ row }) => (
       <Badge asChild>
-        <a href={row.original.link} target="_blank" rel="noopener noreferrer">
-          Open Link <ArrowUpRightIcon data-icon="inline-end" />
+        <a href={row.original.website_url} target="_blank" rel="noopener noreferrer">
+          Open Website <ArrowUpRightIcon data-icon="inline-end" />
         </a>
       </Badge>
     ),
@@ -191,7 +203,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
 ]
 
 
-export function DataTable({
+export function UnsolicitedDataTable({
   data,
 }: {
   data: z.infer<typeof schema>[]
@@ -333,12 +345,12 @@ export function DataTable({
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-          <AddApplicationDrawer>
+          <AddUnsolicitedApplicationDrawer>
             <Button variant="outline" size="sm">
               <PlusIcon />
               <span className="hidden lg:inline">Add</span>
             </Button>
-          </AddApplicationDrawer>
+          </AddUnsolicitedApplicationDrawer>
         </div>
       </div>
       <div className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
@@ -354,7 +366,7 @@ export function DataTable({
                         colSpan={header.colSpan}
                         className={
                           header.column.id === "link"
-                            ? "w-[104px] pr-1"
+                            ? "w-[120px] pr-1"
                             : header.column.id === "actions"
                               ? "w-10 pl-1"
                               : undefined
@@ -381,7 +393,7 @@ export function DataTable({
                         key={cell.id}
                         className={
                           cell.column.id === "link"
-                            ? "w-[104px] pr-1"
+                            ? "w-[120px] pr-1"
                             : cell.column.id === "actions"
                               ? "w-10 pl-1"
                               : undefined

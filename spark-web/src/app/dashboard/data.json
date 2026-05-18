@@ -13,8 +13,11 @@
     "motivationLetter": { "name": "motivation-letter-stripe.pdf", "size": "2.4 MB" },
     "resume": { "name": "resume-2026.pdf", "size": "1.1 MB" },
     "additionalFiles": { "name": "portfolio-stripe.pdf", "size": "3.7 MB" },
-    "interviewOffer": true,
-    "jobOffer": false
+    "applicationFollowUp": null,
+    "interviewFollowUp": null,
+    "interviewOffer": null,
+    "jobOffer": null,
+    "salary": "120 000 $ per year"
   },
   {
     "id": 2,
@@ -30,8 +33,11 @@
     "motivationLetter": null,
     "resume": { "name": "resume-2026.pdf", "size": "1.1 MB" },
     "additionalFiles": { "name": "references-spotify.pdf", "size": "0.8 MB" },
-    "interviewOffer": false,
-    "jobOffer": false
+    "applicationFollowUp": null,
+    "interviewFollowUp": null,
+    "interviewOffer": null,
+    "jobOffer": null,
+    "salary": "85 000 € per year"
   },
   {
     "id": 3,
@@ -47,8 +53,11 @@
     "motivationLetter": null,
     "resume": null,
     "additionalFiles": null,
-    "interviewOffer": false,
-    "jobOffer": false
+    "applicationFollowUp": null,
+    "interviewFollowUp": null,
+    "interviewOffer": null,
+    "jobOffer": null,
+    "salary": ""
   },
   {
     "id": 4,
@@ -64,8 +73,11 @@
     "motivationLetter": null,
     "resume": null,
     "additionalFiles": { "name": "cover-letter-google.pdf", "size": "1.5 MB" },
-    "interviewOffer": false,
-    "jobOffer": false
+    "applicationFollowUp": null,
+    "interviewFollowUp": null,
+    "interviewOffer": null,
+    "jobOffer": null,
+    "salary": "150 000 $ per year"
   },
   {
     "id": 5,
@@ -81,8 +93,11 @@
     "motivationLetter": null,
     "resume": null,
     "additionalFiles": null,
-    "interviewOffer": false,
-    "jobOffer": false
+    "applicationFollowUp": null,
+    "interviewFollowUp": null,
+    "interviewOffer": null,
+    "jobOffer": null,
+    "salary": "70 000 $ per year"
   },
   {
     "id": 6,
@@ -98,7 +113,10 @@
     "motivationLetter": null,
     "resume": null,
     "additionalFiles": null,
-    "interviewOffer": false,
-    "jobOffer": false
+    "applicationFollowUp": null,
+    "interviewFollowUp": null,
+    "interviewOffer": null,
+    "jobOffer": null,
+    "salary": ""
   }
 ]
