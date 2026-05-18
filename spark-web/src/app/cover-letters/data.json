@@ -1,0 +1,6 @@
+[
+  { "id": "1", "name": "CoverLetter_General.pdf", "format": "pdf" },
+  { "id": "2", "name": "CoverLetter_Tech.doc", "format": "doc" },
+  { "id": "3", "name": "CoverLetter_Draft.txt", "format": "txt" },
+  { "id": "4", "name": "CoverLetter_Notes.md", "format": "md" }
+]

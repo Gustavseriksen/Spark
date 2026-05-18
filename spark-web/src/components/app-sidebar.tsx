@@ -125,25 +125,25 @@ const data = {
   documents: [
     {
       name: "Resumes",
-      url: "#",
+      url: "/resumes",
       icon: (
-        <FolderIcon
+        <FolderIcon className="text-yellow-900"
         />
       ),
     },
     {
-      name: "Cover letters",
-      url: "#",
+      name: "Cover Letters",
+      url: "/cover-letters",
       icon: (
-        <FolderIcon
+        <FolderIcon className="text-amber-900"
         />
       ),
     },
     {
-      name: "Other files",
-      url: "#",
+      name: "Additional Files",
+      url: "/additional-files",
       icon: (
-        <FolderIcon
+        <FolderIcon className="text-red-900"
         />
       ),
     },

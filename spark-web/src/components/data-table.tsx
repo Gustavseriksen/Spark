@@ -68,6 +68,8 @@ export const schema = z.object({
   motivationLetter: fileEntry,
   resume: fileEntry,
   additionalFiles: fileEntry,
+  applicationFollowUp: z.string().nullable(),
+  interviewFollowUp: z.string().nullable(),
   interviewOffer: z.string().nullable(),
   jobOffer: z.string().nullable(),
   salary: z.string(),
