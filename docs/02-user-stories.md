@@ -9,12 +9,12 @@
 ## Epic 2: Authentication & User Accounts
 - [x] **Story 2.1:** As a user, I want to create an account with my first name, last name, email, and password so I can have a personalized space to track my applications.
 - [x] **Task 2.2:** Implement Spring Security and JWT (JSON Web Tokens) in the backend to securely hash passwords and authenticate API requests.
-- [ ] **Task 2.3:** Update backend registration logic to automatically generate a default `UserPreference` row whenever a new user signs up.
-- [ ] **Story 2.4:** As a user, I want to log in and securely maintain my session across the Next.js app, and log out when I am done.
-- [ ] **Story 2.5:** As a user, I want to see UI error states (e.g., "Invalid password" or "Email already exists") so I know what went wrong during login/signup.
+- [x] **Task 2.3:** Update backend registration logic to automatically generate a default `UserPreference` row whenever a new user signs up.
+- [x] **Story 2.4:** As a user, I want to log in and securely maintain my session across the Next.js app, and log out when I am done.
+- [x] **Story 2.5:** As a user, I want to see UI error states (e.g., "Invalid password" or "Email already exists") so I know what went wrong during login/signup.
 
 ## Epic 3: Core Job Tracking (The MVP)
-- [ ] **Story 3.1:** As a user, I want to have a login page so i can login.
+- [x] **Story 3.1:** As a user, I want to have a login page so i can login.
 - [ ] **Story 3.2:** As a user, I want to add/edit/delete a Company (Unsolicited) including tags, interview/offer status, and salary, and view details in a slide-out side panel.
 - [ ] **Story 3.3:** As a user, I want to add/edit/delete a Job Ad (Targeted) including post/start dates, tags, and interview/offer status, and view details in a slide-out side panel. Date applied should default to today/tomorrow.
 - [ ] **Story 3.4:** As a user, I want to save the full text of the Job Ad description and Cover Letter sent so I can review them if I get an interview.

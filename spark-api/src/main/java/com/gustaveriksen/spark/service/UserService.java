@@ -1,9 +1,13 @@
 package com.gustaveriksen.spark.service;
 
+
+import org.springframework.transaction.annotation.Transactional;
+import com.gustaveriksen.spark.repository.UserPreferenceRepository;
 import com.gustaveriksen.spark.dto.LoginRequest;
 import com.gustaveriksen.spark.dto.RegisterRequest;
 import com.gustaveriksen.spark.dto.UserResponse;
 import com.gustaveriksen.spark.entity.User;
+import com.gustaveriksen.spark.entity.UserPreference;
 import com.gustaveriksen.spark.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,9 +21,11 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserPreferenceRepository userPreferenceRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
+    @Transactional
     public UserResponse register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("Email is already in use");
@@ -32,6 +38,10 @@ public class UserService {
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
 
         User savedUser = userRepository.save(user);
+
+        UserPreference preferences = new UserPreference();
+        preferences.setUser(savedUser);
+        userPreferenceRepository.save(preferences);
 
         return new UserResponse(
                 savedUser.getId(),

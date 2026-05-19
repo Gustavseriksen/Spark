@@ -62,9 +62,11 @@ export function SignupForm({
       });
 
       if (!res.ok) {
-        setError("Registration failed. Please check your details and try again.");
+        const body = await res.json().catch(() => ({}));
+        setError(body.message ?? "Registration failed. Please check your details and try again.");
         return;
       }
+
 
       router.push("/login");
     } catch {
