@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -50,9 +51,12 @@ public class Company {
     private Integer relevance;
     private String salary;
 
-    @Column(name = "has_interview")
-    private Boolean hasInterview = false;
+    @Column(name = "interview_date")
+    private LocalDate interviewDate;
 
-    @Column(name = "has_offer")
-    private Boolean hasOffer = false;
+    @Column(name = "offer_date")
+    private LocalDate offerDate;
+
+    @Column(name = "follow_up_date")
+    private LocalDate followUpDate;
 }

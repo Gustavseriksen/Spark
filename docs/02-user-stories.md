@@ -15,7 +15,7 @@
 
 ## Epic 3: Core Job Tracking (The MVP)
 - [x] **Story 3.1:** As a user, I want to have a login page so i can login.
-- [ ] **Story 3.2:** As a user, I want to add/edit/delete a Company (Unsolicited) including tags, interview/offer status, and salary, and view details in a slide-out side panel.
+- [x] **Story 3.2:** As a user, I want to add/edit/delete a Company (Unsolicited) including tags, interview/offer status, and salary, and view details in a slide-out side panel.
 - [ ] **Story 3.3:** As a user, I want to add/edit/delete a Job Ad (Targeted) including post/start dates, tags, and interview/offer status, and view details in a slide-out side panel. Date applied should default to today/tomorrow.
 - [ ] **Story 3.4:** As a user, I want to save the full text of the Job Ad description and Cover Letter sent so I can review them if I get an interview.
 - [ ] **Story 3.5:** **Story 2.4:** As a user, I want a tabbed list view (Wishlist, Applied, Interview, Offer) to easily navigate and manage my applications without screen clutter.

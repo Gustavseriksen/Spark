@@ -19,7 +19,7 @@ const data = {
   user: {
     name: "Gustav Eriksen",
     email: "gustav.s.eriksen@gmail.com",
-    avatar: "/avatars/shadcn.jpg",
+    avatar: "",
   },
   navMain: [
     {

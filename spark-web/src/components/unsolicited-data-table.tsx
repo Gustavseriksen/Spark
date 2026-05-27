@@ -23,8 +23,6 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Label } from "@/components/ui/label"
@@ -49,164 +47,65 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
-import { CircleCheckBigIcon, LoaderIcon, CircleDashedIcon, ArrowUpRightIcon, EllipsisVerticalIcon, Columns3Icon, ChevronDownIcon, PlusIcon, ChevronsLeftIcon, ChevronLeftIcon, ChevronRightIcon, ChevronsRightIcon } from "lucide-react"
+import { CircleCheckBigIcon, LoaderIcon, CircleDashedIcon, ArrowUpRightIcon, Columns3Icon, ChevronDownIcon, PlusIcon, ChevronsLeftIcon, ChevronLeftIcon, ChevronRightIcon, ChevronsRightIcon, EllipsisVerticalIcon } from "lucide-react"
 import { UnsolicitedTableCellViewer, AddUnsolicitedApplicationDrawer } from "@/components/unsolicited-table-cell-viewer"
+import {
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { deleteCompany } from "@/lib/companies"
 
 export const schema = z.object({
-  id: z.number(),
-  company_name: z.string(),
-  about: z.string(),
-  size: z.string(),
-  industry: z.array(z.string()),
-  address: z.string(),
-  website_url: z.string(),
-  priority: z.string(),
+  id: z.string().uuid(),
+  name: z.string(),
+  description: z.string().nullable(),
+  size: z.string().nullable(),
+  tags: z.array(z.string()),
+  address: z.string().nullable(),
+  websiteUrl: z.string().nullable(),
   status: z.string(),
-  salary: z.string(),
-  followUp: z.string().nullable(),
-  hasInterview: z.string().nullable(),
-  hasOffer: z.string().nullable(),
+  priority: z.number().nullable(),
+  relevance: z.number().nullable(),
+  salary: z.string().nullable(),
+  interviewDate: z.string().nullable(),
+  offerDate: z.string().nullable(),
+  followUpDate: z.string().nullable(),
 })
-
-const priorityLevel: Record<string, number> = {
-  "Very High": 5,
-  High: 4,
-  Medium: 3,
-  Low: 2,
-  "Very Low": 1,
-  None: 0,
-}
 
 type StatusTab = "all" | "submitted" | "in-process" | "pending"
 
-function PriorityDots({ priority }: { priority: string }) {
-  const level = priorityLevel[priority] ?? 0
+function PriorityDots({ priority }: { priority: number | null }) {
+  const level = priority ?? 0
   return (
     <div className="flex items-center gap-1">
       {Array.from({ length: 5 }).map((_, i) => (
         <div
           key={i}
-          className={`size-2 rounded-full ${
-            i < level ? "bg-foreground" : "bg-foreground/20"
-          }`}
+          className={`size-2 rounded-full ${i < level ? "bg-foreground" : "bg-foreground/20"}`}
         />
       ))}
     </div>
   )
 }
 
-const columns: ColumnDef<z.infer<typeof schema>>[] = [
-  {
-    accessorKey: "company_name",
-    header: "Company Name",
-    cell: ({ row }) => {
-      return <UnsolicitedTableCellViewer item={row.original} />
-    },
-    enableHiding: false,
-  },
-  {
-    accessorKey: "industry",
-    header: "Industry",
-    cell: ({ row }) => {
-      const tags = row.original.industry
-      const visible = tags.slice(0, 2)
-      const remaining = tags.length - visible.length
-      return (
-        <div className="flex flex-wrap items-center gap-1">
-          {visible.map((tag) => (
-            <Badge key={tag} variant="outline" className="px-1.5">
-              {tag}
-            </Badge>
-          ))}
-          {remaining > 0 && (
-            <Badge variant="outline" className="px-1.5 text-muted-foreground">
-              +{remaining}
-            </Badge>
-          )}
-        </div>
-      )
-    },
-  },
-  {
-    accessorKey: "size",
-    header: "Size",
-    cell: ({ row }) => row.original.size || "—",
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => {
-      const status = row.original.status
-
-      const styles: Record<string, string> = {
-        Submitted:
-          "border-yellow-950 text-yellow-700 bg-[linear-gradient(110deg,#1a1500,45%,#854d0e,55%,#1a1500)] bg-[length:200%_100%]",
-        Pending:
-          "border-red-950 text-red-700 bg-[linear-gradient(110deg,#1a0505,45%,#7f1d1d,55%,#1a0505)] bg-[length:200%_100%]",
-        "In Process":
-          "border-amber-950 text-amber-700 bg-[linear-gradient(110deg,#100800,45%,#713f12,55%,#100800)] bg-[length:200%_100%]",
-      }
-
-      const Icon =
-        status === "Submitted" ? CircleCheckBigIcon
-        : status === "Pending" ? CircleDashedIcon
-        : LoaderIcon
-
-      return (
-        <Badge variant="outline" className={`px-1.5 ${styles[status] ?? "text-muted-foreground"}`}>
-          <Icon />
-          {status}
-        </Badge>
-      )
-    },
-  },
-  {
-    accessorKey: "priority",
-    header: "Priority",
-    cell: ({ row }) => <PriorityDots priority={row.original.priority} />,
-  },
-  {
-    id: "link",
-    header: () => null,
-    cell: ({ row }) => (
-      <Badge asChild>
-        <a href={row.original.website_url} target="_blank" rel="noopener noreferrer">
-          Open Website <ArrowUpRightIcon data-icon="inline-end" />
-        </a>
-      </Badge>
-    ),
-  },
-  {
-    id: "actions",
-    header: () => null,
-    cell: () => (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            className="flex size-8 text-muted-foreground data-[state=open]:bg-muted"
-            size="icon"
-          >
-            <EllipsisVerticalIcon />
-            <span className="sr-only">Open menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-32">
-          <DropdownMenuItem>View</DropdownMenuItem>
-          <DropdownMenuItem>Edit</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    ),
-  },
-]
 
 
 export function UnsolicitedDataTable({
   data,
+  onRefresh,
 }: {
   data: z.infer<typeof schema>[]
+  onRefresh: () => void
 }) {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
@@ -215,6 +114,27 @@ export function UnsolicitedDataTable({
   )
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [activeTab, setActiveTab] = React.useState<StatusTab>("all")
+
+  // Tracks which row's drawer is open and on which tab
+  const [selectedRow, setSelectedRow] = React.useState<z.infer<typeof schema> | null>(null)
+  const [selectedTab, setSelectedTab] = React.useState<"read" | "edit">("read")
+
+  // Tracks which row is pending deletion from the actions dropdown
+  const [deleteTarget, setDeleteTarget] = React.useState<z.infer<typeof schema> | null>(null)
+  const [deleteLoading, setDeleteLoading] = React.useState(false)
+
+  // Deletes the target company and refreshes the table
+  async function handleDelete() {
+    if (!deleteTarget) return
+    setDeleteLoading(true)
+    try {
+      await deleteCompany(deleteTarget.id)
+      setDeleteTarget(null)
+      onRefresh()
+    } finally {
+      setDeleteLoading(false)
+    }
+  }
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
     pageSize: 10,
@@ -241,6 +161,122 @@ export function UnsolicitedDataTable({
 
     return data.filter((item) => item.status === statusByTab[activeTab])
   }, [activeTab, data])
+
+  const columns = React.useMemo<ColumnDef<z.infer<typeof schema>>[]>(
+    () => [
+      {
+        accessorKey: "name",
+        header: "Company Name",
+        cell: ({ row }) => (
+          <Button
+            variant="link"
+            className="w-fit px-0 text-left text-foreground"
+            onClick={() => { setSelectedRow(row.original); setSelectedTab("read") }}
+          >
+            {row.original.name}
+          </Button>
+        ),
+        enableHiding: false,
+      },
+      {
+        accessorKey: "tags",
+        header: "Industry",
+        cell: ({ row }) => {
+          const tags = row.original.tags
+          const visible = tags.slice(0, 2)
+          const remaining = tags.length - visible.length
+          return (
+            <div className="flex flex-wrap items-center gap-1">
+              {visible.map((tag) => (
+                <Badge key={tag} variant="outline" className="px-1.5">
+                  {tag}
+                </Badge>
+              ))}
+              {remaining > 0 && (
+                <Badge variant="outline" className="px-1.5 text-muted-foreground">
+                  +{remaining}
+                </Badge>
+              )}
+            </div>
+          )
+        },
+      },
+      {
+        accessorKey: "size",
+        header: "Size",
+        cell: ({ row }) => row.original.size || "—",
+      },
+      {
+        accessorKey: "status",
+        header: "Status",
+        cell: ({ row }) => {
+          const status = row.original.status
+          const styles: Record<string, string> = {
+            Submitted: "border-yellow-950 text-yellow-700 bg-[linear-gradient(110deg,#1a1500,45%,#854d0e,55%,#1a1500)] bg-[length:200%_100%]",
+            Pending: "border-red-950 text-red-700 bg-[linear-gradient(110deg,#1a0505,45%,#7f1d1d,55%,#1a0505)] bg-[length:200%_100%]",
+            "In Process": "border-amber-950 text-amber-700 bg-[linear-gradient(110deg,#100800,45%,#713f12,55%,#100800)] bg-[length:200%_100%]",
+          }
+          const Icon =
+            status === "Submitted" ? CircleCheckBigIcon
+            : status === "Pending" ? CircleDashedIcon
+            : LoaderIcon
+          return (
+            <Badge variant="outline" className={`px-1.5 ${styles[status] ?? "text-muted-foreground"}`}>
+              <Icon />
+              {status}
+            </Badge>
+          )
+        },
+      },
+      {
+        accessorKey: "priority",
+        header: "Priority",
+        cell: ({ row }) => <PriorityDots priority={row.original.priority} />,
+      },
+      {
+        id: "link",
+        header: () => null,
+        cell: ({ row }) => (
+          <Badge asChild>
+            <a href={row.original.websiteUrl ?? "#"} target="_blank" rel="noopener noreferrer">
+              Open Website <ArrowUpRightIcon data-icon="inline-end" />
+            </a>
+          </Badge>
+        ),
+      },
+      {
+        id: "actions",
+        header: () => null,
+        cell: ({ row }) => (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                className="flex size-8 text-muted-foreground data-[state=open]:bg-muted"
+                size="icon"
+              >
+                <EllipsisVerticalIcon />
+                <span className="sr-only">Open menu</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-32">
+              <DropdownMenuItem onClick={() => { setSelectedRow(row.original); setSelectedTab("read") }}>
+                View
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => { setSelectedRow(row.original); setSelectedTab("edit") }}>
+                Edit
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem variant="destructive" onClick={() => setDeleteTarget(row.original)}>
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ),
+      },
+    ],
+    [onRefresh]
+  )
 
   const table = useReactTable({
     data: filteredData,
@@ -272,6 +308,7 @@ export function UnsolicitedDataTable({
   }
 
   return (
+    <>
     <Tabs
       value={activeTab}
       onValueChange={handleTabChange}
@@ -345,7 +382,7 @@ export function UnsolicitedDataTable({
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-          <AddUnsolicitedApplicationDrawer>
+          <AddUnsolicitedApplicationDrawer onRefresh={onRefresh}>
             <Button variant="outline" size="sm">
               <PlusIcon />
               <span className="hidden lg:inline">Add</span>
@@ -366,7 +403,7 @@ export function UnsolicitedDataTable({
                         colSpan={header.colSpan}
                         className={
                           header.column.id === "link"
-                            ? "w-[120px] pr-1"
+                            ? "w-30 pr-1"
                             : header.column.id === "actions"
                               ? "w-10 pl-1"
                               : undefined
@@ -393,7 +430,7 @@ export function UnsolicitedDataTable({
                         key={cell.id}
                         className={
                           cell.column.id === "link"
-                            ? "w-[120px] pr-1"
+                            ? "w-30 pr-1"
                             : cell.column.id === "actions"
                               ? "w-10 pl-1"
                               : undefined
@@ -498,5 +535,33 @@ export function UnsolicitedDataTable({
         </div>
       </div>
     </Tabs>
+
+    {/* Single drawer instance shared by name link and actions dropdown */}
+    {selectedRow && (
+      <UnsolicitedTableCellViewer
+        item={selectedRow}
+        open={true}
+        defaultTab={selectedTab}
+        onOpenChange={(next) => { if (!next) setSelectedRow(null) }}
+        onRefresh={onRefresh}
+      />
+    )}
+
+    {/* Delete confirmation triggered from the actions dropdown */}
+    <AlertDialog open={!!deleteTarget} onOpenChange={(next) => { if (!next) setDeleteTarget(null) }}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Delete {deleteTarget?.name}?</AlertDialogTitle>
+          <AlertDialogDescription>This can&apos;t be undone.</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel disabled={deleteLoading}>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={handleDelete} disabled={deleteLoading}>
+            {deleteLoading ? "Deleting..." : "Delete"}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+    </>
   )
 }

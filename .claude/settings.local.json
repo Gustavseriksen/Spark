@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s -c /tmp/spark_cookies.txt -X POST http://localhost:8080/api/auth/login -H 'Content-Type: application/json' -d '{\"email\":\"gustav.s.eriksen@gmail.com\",\"password\":\"crusaderX1\"}')"
+    ]
+  }
+}

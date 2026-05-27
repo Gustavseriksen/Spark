@@ -1,12 +1,33 @@
+"use client"
+
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 import { AppSidebar } from "@/components/app-sidebar"
 import { RequireAuth } from "@/components/require-auth"
 import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { UnsolicitedDataTable } from "@/components/unsolicited-data-table"
-
-import data from "./data.json"
+import { listCompanies, type CompanyDto } from "@/lib/companies"
 
 export default function Page() {
+  const [companies, setCompanies] = useState<CompanyDto[]>([])
+  const router = useRouter()
+
+  // Loads companies from the API — redirects to login if the session has expired
+  async function refresh() {
+    try {
+      const data = await listCompanies()
+      setCompanies(data)
+    } catch {
+      router.push("/login")
+    }
+  }
+
+  // Fetch companies on initial page load
+  useEffect(() => {
+    refresh()
+  }, [])
+
   return (
     <RequireAuth>
       <SidebarProvider
@@ -27,7 +48,7 @@ export default function Page() {
                   <h1 className="text-2xl font-semibold tracking-tight">Unsolicited Applications</h1>
                   <p className="text-muted-foreground">Companies you&apos;d like to reach out to.</p>
                 </div>
-                <UnsolicitedDataTable data={data} />
+                <UnsolicitedDataTable data={companies} onRefresh={refresh} />
               </div>
             </div>
           </div>
