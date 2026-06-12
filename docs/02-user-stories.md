@@ -16,9 +16,9 @@
 ## Epic 3: Core Job Tracking (The MVP)
 - [x] **Story 3.1:** As a user, I want to have a login page so i can login.
 - [x] **Story 3.2:** As a user, I want to add/edit/delete a Company (Unsolicited) including tags, interview/offer status, and salary, and view details in a slide-out side panel.
-- [ ] **Story 3.3:** As a user, I want to add/edit/delete a Job Ad (Targeted) including post/start dates, tags, and interview/offer status, and view details in a slide-out side panel. Date applied should default to today/tomorrow.
+- [x] **Story 3.3:** As a user, I want to add/edit/delete a Job Ad (Targeted) including post/start dates, tags, and interview/offer status, and view details in a slide-out side panel. Date applied should default to today/tomorrow.
 - [ ] **Story 3.4:** As a user, I want to save the full text of the Job Ad description and Cover Letter sent so I can review them if I get an interview.
-- [ ] **Story 3.5:** **Story 2.4:** As a user, I want a tabbed list view (Wishlist, Applied, Interview, Offer) to easily navigate and manage my applications without screen clutter.
+- [ ] **Story 3.5:** As a user, I want a tabbed list view (Wishlist, Applied, Interview, Offer) to easily navigate and manage my applications without screen clutter.
 
 ## Epic 4: The Value Matching Engine (Core Feature)
 - [ ] **Story 4.1:** As a user, I want to configure my matching algorithm preferences (salary, commute, tags) on my Profile page using interactive sliders and toggles.
@@ -36,5 +36,8 @@
 - [ ] **Story 6.2:** As a user, I want to see a "GitHub-style" contribution streak graph visually rewarding consistency.
 - [ ] **Story 6.3:** As a user, I want an analytics dashboard showing: Sent this week/month/year, Total Interviews, Total Offers, and my "High Score" (Highest applications sent in a single day/week/month).
 
-## Epic 7: Browser Extension (Stretch Goal)
-- [ ] **Story 7.1:** As a user, I want a Chrome Extension that scrapes Job Title, Company, and Link from LinkedIn/Indeed and pushes it directly to my Spark app.
+## Epic 7: Automated Job Discovery & Browser Extension (Stretch Goal)
+- [x] **Task 7.0:** Build a standalone job discovery prototype: an n8n workflow running Apify scrapers for Welcome to the Jungle and Indeed, with AI relevance scoring (OpenAI) and Telegram delivery. Runs outside Spark today; see the README for details.
+- [ ] **Story 7.1:** As a user, I want discovered jobs from the scraper pipeline to flow directly into my targeted applications instead of Telegram.
+- [ ] **Story 7.2:** As a user, I want a browser extension that scrapes Job Title, Company, and Link from a job posting I am viewing and pushes it directly to my Spark app.
+- [ ] **Story 7.3:** As a user, I want a browser extension that auto-fills recurring application form fields from my saved profile and documents.
