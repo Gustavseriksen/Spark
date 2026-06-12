@@ -16,6 +16,7 @@ import {
   type VisibilityState,
 } from "@tanstack/react-table"
 import { z } from "zod"
+import { format, parseISO } from "date-fns"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -27,6 +28,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { Label } from "@/components/ui/label"
 import {
   Select,
@@ -51,28 +62,25 @@ import {
 } from "@/components/ui/tabs"
 import { CircleCheckBigIcon, LoaderIcon, CircleDashedIcon, ArrowUpRightIcon, EllipsisVerticalIcon, Columns3Icon, ChevronDownIcon, PlusIcon, ChevronsLeftIcon, ChevronLeftIcon, ChevronRightIcon, ChevronsRightIcon } from "lucide-react"
 import { TableCellViewer, AddApplicationDrawer } from "@/components/table-cell-viewer"
-
-const fileEntry = z.object({ name: z.string(), size: z.string() }).nullable()
+import { deleteJobAd } from "@/lib/job-ads"
 
 export const schema = z.object({
-  id: z.number(),
+  id: z.string().uuid(),
   title: z.string(),
-  company: z.string(),
+  companyName: z.string().nullable(),
   status: z.string(),
-  postDate: z.string(),
-  startDate: z.string(),
-  priority: z.string(),
-  link: z.string(),
+  postDate: z.string().nullable(),
+  startDate: z.string().nullable(),
   appliedDate: z.string().nullable(),
-  description: z.string(),
-  motivationLetter: fileEntry,
-  resume: fileEntry,
-  additionalFiles: fileEntry,
+  link: z.string().nullable(),
+  description: z.string().nullable(),
+  tags: z.array(z.string()),
+  priority: z.string().nullable(),
+  salary: z.string().nullable(),
   applicationFollowUp: z.string().nullable(),
   interviewFollowUp: z.string().nullable(),
   interviewOffer: z.string().nullable(),
   jobOffer: z.string().nullable(),
-  salary: z.string(),
 })
 
 const priorityLevel: Record<string, number> = {
@@ -86,8 +94,8 @@ const priorityLevel: Record<string, number> = {
 
 type StatusTab = "all" | "submitted" | "in-process" | "pending"
 
-function PriorityDots({ priority }: { priority: string }) {
-  const level = priorityLevel[priority] ?? 0
+function PriorityDots({ priority }: { priority: string | null }) {
+  const level = priorityLevel[priority ?? ""] ?? 0
   return (
     <div className="flex items-center gap-1">
       {Array.from({ length: 5 }).map((_, i) => (
@@ -102,101 +110,12 @@ function PriorityDots({ priority }: { priority: string }) {
   )
 }
 
-const columns: ColumnDef<z.infer<typeof schema>>[] = [
-  {
-    accessorKey: "title",
-    header: "Title",
-    cell: ({ row }) => {
-      return <TableCellViewer item={row.original} />
-    },
-    enableHiding: false,
-  },
-  {
-    accessorKey: "company",
-    header: "Company",
-    cell: ({ row }) => row.original.company,
-  },
-{
-  accessorKey: "status",
-  header: "Status",
-  cell: ({ row }) => {
-    const status = row.original.status
-
-    const styles: Record<string, string> = {
-      Submitted:
-        "border-yellow-950 text-yellow-700 bg-[linear-gradient(110deg,#1a1500,45%,#854d0e,55%,#1a1500)] bg-[length:200%_100%]",
-      Pending:
-        "border-red-950 text-red-700 bg-[linear-gradient(110deg,#1a0505,45%,#7f1d1d,55%,#1a0505)] bg-[length:200%_100%]",
-      "In Process":
-        "border-amber-950 text-amber-700 bg-[linear-gradient(110deg,#100800,45%,#713f12,55%,#100800)] bg-[length:200%_100%]",
-    }
-
-    const Icon =
-      status === "Submitted" ? CircleCheckBigIcon
-      : status === "Pending" ? CircleDashedIcon
-      : LoaderIcon
-
-    return (
-      <Badge variant="outline" className={`px-1.5 ${styles[status] ?? "text-muted-foreground"}`}>
-        <Icon />
-        {status}
-      </Badge>
-    )
-  },
-},
-
-  {
-    accessorKey: "postDate",
-    header: "Post Date",
-    cell: ({ row }) => row.original.postDate,
-  },
-  {
-    accessorKey: "priority",
-    header: "Priority",
-    cell: ({ row }) => <PriorityDots priority={row.original.priority} />,
-  },
-  {
-    id: "link",
-    header: () => null,
-    cell: ({ row }) => (
-      <Badge asChild>
-        <a href={row.original.link} target="_blank" rel="noopener noreferrer">
-          Open Link <ArrowUpRightIcon data-icon="inline-end" />
-        </a>
-      </Badge>
-    ),
-  },
-  {
-    id: "actions",
-    header: () => null,
-    cell: () => (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            className="flex size-8 text-muted-foreground data-[state=open]:bg-muted"
-            size="icon"
-          >
-            <EllipsisVerticalIcon />
-            <span className="sr-only">Open menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-32">
-          <DropdownMenuItem>View</DropdownMenuItem>
-          <DropdownMenuItem>Edit</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    ),
-  },
-]
-
-
 export function DataTable({
   data,
+  onRefresh,
 }: {
   data: z.infer<typeof schema>[]
+  onRefresh: () => void
 }) {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
@@ -205,6 +124,27 @@ export function DataTable({
   )
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [activeTab, setActiveTab] = React.useState<StatusTab>("all")
+
+  // Tracks which row's drawer is open and on which tab
+  const [selectedRow, setSelectedRow] = React.useState<z.infer<typeof schema> | null>(null)
+  const [selectedTab, setSelectedTab] = React.useState<"read" | "edit">("read")
+
+  // Tracks which row is pending deletion from the actions dropdown
+  const [deleteTarget, setDeleteTarget] = React.useState<z.infer<typeof schema> | null>(null)
+  const [deleteLoading, setDeleteLoading] = React.useState(false)
+
+  // Deletes the target job ad and refreshes the table
+  async function handleDelete() {
+    if (!deleteTarget) return
+    setDeleteLoading(true)
+    try {
+      await deleteJobAd(deleteTarget.id)
+      setDeleteTarget(null)
+      onRefresh()
+    } finally {
+      setDeleteLoading(false)
+    }
+  }
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
     pageSize: 10,
@@ -231,6 +171,110 @@ export function DataTable({
 
     return data.filter((item) => item.status === statusByTab[activeTab])
   }, [activeTab, data])
+
+  const columns = React.useMemo<ColumnDef<z.infer<typeof schema>>[]>(
+    () => [
+      {
+        accessorKey: "title",
+        header: "Title",
+        cell: ({ row }) => (
+          <Button
+            variant="link"
+            className="w-fit px-0 text-left text-foreground"
+            onClick={() => { setSelectedRow(row.original); setSelectedTab("read") }}
+          >
+            {row.original.title}
+          </Button>
+        ),
+        enableHiding: false,
+      },
+      {
+        accessorKey: "companyName",
+        header: "Company",
+        cell: ({ row }) => row.original.companyName || "—",
+      },
+      {
+        accessorKey: "status",
+        header: "Status",
+        cell: ({ row }) => {
+          const status = row.original.status
+          const styles: Record<string, string> = {
+            Submitted:
+              "border-yellow-950 text-yellow-700 bg-[linear-gradient(110deg,#1a1500,45%,#854d0e,55%,#1a1500)] bg-[length:200%_100%]",
+            Pending:
+              "border-red-950 text-red-700 bg-[linear-gradient(110deg,#1a0505,45%,#7f1d1d,55%,#1a0505)] bg-[length:200%_100%]",
+            "In Process":
+              "border-amber-950 text-amber-700 bg-[linear-gradient(110deg,#100800,45%,#713f12,55%,#100800)] bg-[length:200%_100%]",
+          }
+          const Icon =
+            status === "Submitted" ? CircleCheckBigIcon
+            : status === "Pending" ? CircleDashedIcon
+            : LoaderIcon
+          return (
+            <Badge variant="outline" className={`px-1.5 ${styles[status] ?? "text-muted-foreground"}`}>
+              <Icon />
+              {status}
+            </Badge>
+          )
+        },
+      },
+      {
+        accessorKey: "postDate",
+        header: "Post Date",
+        cell: ({ row }) =>
+          row.original.postDate
+            ? format(parseISO(row.original.postDate), "dd/MM/yyyy")
+            : "—",
+      },
+      {
+        accessorKey: "priority",
+        header: "Priority",
+        cell: ({ row }) => <PriorityDots priority={row.original.priority} />,
+      },
+      {
+        id: "link",
+        header: () => null,
+        cell: ({ row }) => (
+          <Badge asChild>
+            <a href={row.original.link ?? "#"} target="_blank" rel="noopener noreferrer">
+              Open Link <ArrowUpRightIcon data-icon="inline-end" />
+            </a>
+          </Badge>
+        ),
+      },
+      {
+        id: "actions",
+        header: () => null,
+        cell: ({ row }) => (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                className="flex size-8 text-muted-foreground data-[state=open]:bg-muted"
+                size="icon"
+              >
+                <EllipsisVerticalIcon />
+                <span className="sr-only">Open menu</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-32">
+              <DropdownMenuItem onClick={() => { setSelectedRow(row.original); setSelectedTab("read") }}>
+                View
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => { setSelectedRow(row.original); setSelectedTab("edit") }}>
+                Edit
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem variant="destructive" onClick={() => setDeleteTarget(row.original)}>
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ),
+      },
+    ],
+    []
+  )
 
   const table = useReactTable({
     data: filteredData,
@@ -262,6 +306,7 @@ export function DataTable({
   }
 
   return (
+    <>
     <Tabs
       value={activeTab}
       onValueChange={handleTabChange}
@@ -335,7 +380,7 @@ export function DataTable({
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-          <AddApplicationDrawer>
+          <AddApplicationDrawer onRefresh={onRefresh}>
             <Button variant="outline" size="sm">
               <PlusIcon />
               <span className="hidden lg:inline">Add</span>
@@ -488,5 +533,33 @@ export function DataTable({
         </div>
       </div>
     </Tabs>
+
+    {/* Single drawer instance shared by title link and actions dropdown */}
+    {selectedRow && (
+      <TableCellViewer
+        item={selectedRow}
+        open={true}
+        defaultTab={selectedTab}
+        onOpenChange={(next) => { if (!next) setSelectedRow(null) }}
+        onRefresh={onRefresh}
+      />
+    )}
+
+    {/* Delete confirmation triggered from the actions dropdown */}
+    <AlertDialog open={!!deleteTarget} onOpenChange={(next) => { if (!next) setDeleteTarget(null) }}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Delete {deleteTarget?.title}?</AlertDialogTitle>
+          <AlertDialogDescription>This can&apos;t be undone.</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel disabled={deleteLoading}>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={handleDelete} disabled={deleteLoading}>
+            {deleteLoading ? "Deleting..." : "Delete"}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+    </>
   )
 }

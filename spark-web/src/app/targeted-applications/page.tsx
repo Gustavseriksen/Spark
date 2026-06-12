@@ -1,12 +1,30 @@
+"use client"
+
+import { useCallback, useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 import { AppSidebar } from "@/components/app-sidebar"
 import { DataTable } from "@/components/data-table"
 import { RequireAuth } from "@/components/require-auth"
 import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
-
-import data from "../dashboard/data.json"
+import { listJobAds, type JobAdDto } from "@/lib/job-ads"
 
 export default function Page() {
+  const [jobAds, setJobAds] = useState<JobAdDto[]>([])
+  const router = useRouter()
+
+  // Loads job ads from the API — redirects to login if the session has expired
+  const refresh = useCallback(() => {
+    listJobAds()
+      .then(setJobAds)
+      .catch(() => router.push("/login"))
+  }, [router])
+
+  // Fetch job ads on initial page load
+  useEffect(() => {
+    refresh()
+  }, [refresh])
+
   return (
     <RequireAuth>
       <SidebarProvider
@@ -27,7 +45,7 @@ export default function Page() {
                   <h1 className="text-2xl font-semibold tracking-tight">Targeted Applications</h1>
                   <p className="text-muted-foreground">Jobs you&apos;re actively pursuing.</p>
                 </div>
-                <DataTable data={data} />
+                <DataTable data={jobAds} onRefresh={refresh} />
               </div>
             </div>
           </div>

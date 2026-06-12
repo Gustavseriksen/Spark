@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { AppSidebar } from "@/components/app-sidebar"
 import { RequireAuth } from "@/components/require-auth"
@@ -14,19 +14,16 @@ export default function Page() {
   const router = useRouter()
 
   // Loads companies from the API — redirects to login if the session has expired
-  async function refresh() {
-    try {
-      const data = await listCompanies()
-      setCompanies(data)
-    } catch {
-      router.push("/login")
-    }
-  }
+  const refresh = useCallback(() => {
+    listCompanies()
+      .then(setCompanies)
+      .catch(() => router.push("/login"))
+  }, [router])
 
   // Fetch companies on initial page load
   useEffect(() => {
     refresh()
-  }, [])
+  }, [refresh])
 
   return (
     <RequireAuth>

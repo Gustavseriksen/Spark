@@ -24,24 +24,11 @@ public class JobAd {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "company_id")
-    private Company company;
-
     @Column(nullable = false)
     private String title;
 
-    @Column(name = "ad_url", length = 500)
-    private String adUrl;
-
-    @Column(name = "ad_description", columnDefinition = "TEXT")
-    private String adDescription;
-
-    @Column(name = "application_text", columnDefinition = "TEXT")
-    private String applicationText;
-
-    @Column(name = "resume_url", length = 500)
-    private String resumeUrl;
+    @Column(name = "company_name")
+    private String companyName;
 
     @Column(nullable = false, length = 50)
     private String status;
@@ -55,21 +42,33 @@ public class JobAd {
     @Column(name = "applied_date")
     private LocalDate appliedDate;
 
+    @Column(name = "ad_url", length = 500)
+    private String link;
+
+    @Column(name = "ad_description", columnDefinition = "TEXT")
+    private String description;
+
     @ElementCollection
     @CollectionTable(name = "job_ad_tags", joinColumns = @JoinColumn(name = "job_ad_id"))
     @Column(name = "tag")
     private List<String> tags;
 
-    private Integer priority;
-    private Integer relevance;
+    // String label ("Very High".."None"); new column because the legacy integer
+    // "priority" column can't be type-altered by ddl-auto: update
+    @Column(name = "priority_label", length = 20)
+    private String priority;
+
     private String salary;
 
-    @Column(name = "has_interview")
-    private Boolean hasInterview = false;
+    @Column(name = "application_follow_up")
+    private LocalDate applicationFollowUp;
 
-    @Column(name = "has_offer")
-    private Boolean hasOffer = false;
+    @Column(name = "interview_follow_up")
+    private LocalDate interviewFollowUp;
 
-    @Column(name = "match_score")
-    private Double matchScore;
+    @Column(name = "interview_offer")
+    private LocalDate interviewOffer;
+
+    @Column(name = "job_offer")
+    private LocalDate jobOffer;
 }
